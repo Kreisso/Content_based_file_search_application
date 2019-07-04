@@ -15,8 +15,7 @@ public class Controller {
     public TreeView<String> filesTree;
     public CheckListView<String> typeFiles;
     public AreaChart areaChart;
-    ArrayList<XYChart.Series<Number, Number>> seriesContainer = new ArrayList();//Use an ArrayList to hold new Series!
-
+    ArrayList<XYChart.Series<Number, Number>> seriesContainer = new ArrayList();
 
     public void initialize() {
         loadTreeItems("initial 1", "initial 2", "initial 3");
@@ -28,8 +27,6 @@ public class Controller {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.addAll(checkItems);
         typeFiles.setItems(strings);
-
-
     }
 
     public void loadChart() {
@@ -44,42 +41,40 @@ public class Controller {
 //           // series.getData().add(new XYChart.Data(i, test));
 //        }
         ////
-        XYChart.Series seriesApril= new XYChart.Series();
-        seriesApril.setName("April");
-        seriesApril.getData().add(new XYChart.Data(1, 4));
-        seriesApril.getData().add(new XYChart.Data(3, 10));
-        seriesApril.getData().add(new XYChart.Data(6, 15));
-        seriesApril.getData().add(new XYChart.Data(9, 8));
-        seriesApril.getData().add(new XYChart.Data(12, 5));
-        seriesApril.getData().add(new XYChart.Data(15, 18));
-        seriesApril.getData().add(new XYChart.Data(18, 15));
-        seriesApril.getData().add(new XYChart.Data(21, 13));
-        seriesApril.getData().add(new XYChart.Data(24, 19));
-        seriesApril.getData().add(new XYChart.Data(27, 21));
-        seriesApril.getData().add(new XYChart.Data(30, 21));
+        XYChart.Series seriesTest1= new XYChart.Series();
+        seriesTest1.setName("Test 1");
+        seriesTest1.getData().add(new XYChart.Data(1, 4));
+        seriesTest1.getData().add(new XYChart.Data(3, 10));
+        seriesTest1.getData().add(new XYChart.Data(6, 15));
+        seriesTest1.getData().add(new XYChart.Data(9, 8));
+        seriesTest1.getData().add(new XYChart.Data(12, 5));
+        seriesTest1.getData().add(new XYChart.Data(15, 18));
+        seriesTest1.getData().add(new XYChart.Data(18, 15));
+        seriesTest1.getData().add(new XYChart.Data(21, 13));
+        seriesTest1.getData().add(new XYChart.Data(24, 19));
+        seriesTest1.getData().add(new XYChart.Data(27, 21));
+        seriesTest1.getData().add(new XYChart.Data(30, 21));
 
-        XYChart.Series seriesMay = new XYChart.Series();
-        seriesMay.setName("May");
-        seriesMay.getData().add(new XYChart.Data(1, 20));
-        seriesMay.getData().add(new XYChart.Data(3, 15));
-        seriesMay.getData().add(new XYChart.Data(6, 13));
-        seriesMay.getData().add(new XYChart.Data(9, 12));
-        seriesMay.getData().add(new XYChart.Data(12, 14));
-        seriesMay.getData().add(new XYChart.Data(15, 18));
-        seriesMay.getData().add(new XYChart.Data(18, 25));
-        seriesMay.getData().add(new XYChart.Data(21, 25));
-        seriesMay.getData().add(new XYChart.Data(24, 23));
-        seriesMay.getData().add(new XYChart.Data(27, 26));
-        seriesMay.getData().add(new XYChart.Data(31, 26));
+        XYChart.Series seriesTest2 = new XYChart.Series();
+        seriesTest2.setName("Test 2");
+        seriesTest2.getData().add(new XYChart.Data(1, 20));
+        seriesTest2.getData().add(new XYChart.Data(3, 15));
+        seriesTest2.getData().add(new XYChart.Data(6, 13));
+        seriesTest2.getData().add(new XYChart.Data(9, 12));
+        seriesTest2.getData().add(new XYChart.Data(12, 14));
+        seriesTest2.getData().add(new XYChart.Data(15, 18));
+        seriesTest2.getData().add(new XYChart.Data(18, 25));
+        seriesTest2.getData().add(new XYChart.Data(21, 25));
+        seriesTest2.getData().add(new XYChart.Data(24, 23));
+        seriesTest2.getData().add(new XYChart.Data(27, 26));
+        seriesTest2.getData().add(new XYChart.Data(31, 26));
 
-        seriesContainer.add(seriesMay);
-        seriesContainer.add(seriesApril);
-
+        seriesContainer.add(seriesTest2);
+        seriesContainer.add(seriesTest1);
 
          for (XYChart.Series<Number, Number> numberNumberSeries : seriesContainer) {
             areaChart.getData().add(numberNumberSeries);
          }
-
     }
 
     public void loadTreeItems(String... rootItems) {

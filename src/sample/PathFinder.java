@@ -12,9 +12,8 @@ public class PathFinder implements Runnable{
 
             this.queue = kolejka;
             this.mainPath = sciezkaGlowna;
-
-
         }
+
         public void findPath(File path) throws InterruptedException {
             File[] listFiles = path.listFiles();
 
@@ -27,11 +26,9 @@ public class PathFinder implements Runnable{
                 else
                 {
                     queue.put(listFiles[i]);
-
                 }
             }
         }
-
 
         public void run() {
             try {
