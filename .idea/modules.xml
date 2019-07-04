@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Inżynierka.iml" filepath="$PROJECT_DIR$/Inżynierka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Content_based_file_search_application.iml" filepath="$PROJECT_DIR$/Content_based_file_search_application.iml" />
     </modules>
   </component>
 </project>
