@@ -67,13 +67,14 @@ public class FileScanner implements Runnable {
                 File currentFile;
                 currentFile = queue.take();
                 Optional<String> typeFile = getExtensionByStringHandling(currentFile.getPath());
-                System.out.println("typeFile :"+typeFile);
+//                System.out.println("typeFile :"+typeFile);
+//                System.out.println("file name :"+currentFile.getName());
 //                if(currentFile.getFile)
                 if (currentFile.equals(new File("Empty"))) {
                     interrupt = true;
                     queue.put(currentFile);
                 } else {
-//                    FindWord(currentFile);
+                    FindWord(currentFile);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

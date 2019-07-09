@@ -33,11 +33,16 @@
                 <HBox prefHeight="100.0" prefWidth="200.0">
                     <children>
                         <TextField id="searchText" fx:id="key" promptText="search" />
-                        <TextField fx:id="user">
+                        <TextField fx:id="pathTextField" promptText="Path">
                             <HBox.margin>
                                 <Insets left="5.0" />
                             </HBox.margin>
                         </TextField>
+                  <Button fx:id="chooseDirectoryButton" mnemonicParsing="false" text="Choose directory">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Button>
                         <Button fx:id="searchButton" mnemonicParsing="false" text="Search">
                             <HBox.margin>
                                 <Insets left="5.0" />

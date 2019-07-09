@@ -12,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import org.controlsfx.control.CheckListView;
 
 import java.io.File;
@@ -25,8 +27,8 @@ public class Controller {
     public TreeView<String> filesTree;
     public CheckListView<String> typeFiles;
     public AreaChart areaChart;
-    public Button searchButton;
-    public TextField key;
+    public Button searchButton, chooseDirectoryButton;
+    public TextField key,pathTextField;
     ArrayList<XYChart.Series<Number, Number>> seriesContainer = new ArrayList();
     private File file;
     private Multimap<String,String> multimap =  ArrayListMultimap.create();
@@ -36,6 +38,7 @@ public class Controller {
         loadCheckListItems("TXT", "RTF", "DOC/DOCX", "ODT", "CSS", "HTML", "HTM", "XML", "WPS");
         loadChart();
         setSearchButton();
+        addDirectoryChooser();
     }
 
     public void loadCheckListItems(String... checkItems) {
@@ -55,6 +58,17 @@ public class Controller {
                }
            }
        });
+    }
+
+    private void addDirectoryChooser() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        chooseDirectoryButton.setOnAction(e -> {
+            File selectedDirectory = directoryChooser.showDialog(Stage.getWindows().filtered(window -> window.isShowing()).get(0));
+            pathTextField.setText(selectedDirectory.getAbsolutePath());
+
+        });
     }
 
     private List<String> getCheckedBoxes() {
@@ -123,7 +137,11 @@ public class Controller {
     {
 //    String path = "/Users/kreisso/Desktop/";
 //        String path = System.getProperty("user.dir");
+
         String path = System.getProperty("user.home");
+        if(!pathTextField.getText().isEmpty()) {
+            path = pathTextField.getText();
+        }
         file = new File(path);
 
         BlockingQueue<File> arrayBlockingQueue = new ArrayBlockingQueue<File>(5);
