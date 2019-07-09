@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.*?>
 <?import java.lang.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.geometry.*?>
 <?import org.controlsfx.control.*?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -33,13 +32,13 @@
                 </MenuBar>
                 <HBox prefHeight="100.0" prefWidth="200.0">
                     <children>
-                        <TextField />
-                        <TextField>
+                        <TextField id="searchText" fx:id="key" promptText="search" />
+                        <TextField fx:id="user">
                             <HBox.margin>
                                 <Insets left="5.0" />
                             </HBox.margin>
                         </TextField>
-                        <Button mnemonicParsing="false" text="Search">
+                        <Button fx:id="searchButton" mnemonicParsing="false" text="Search">
                             <HBox.margin>
                                 <Insets left="5.0" />
                             </HBox.margin>

@@ -1,32 +1,64 @@
 package sample;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import org.controlsfx.control.CheckListView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class Controller {
 
     public TreeView<String> filesTree;
     public CheckListView<String> typeFiles;
     public AreaChart areaChart;
+    public Button searchButton;
+    public TextField key;
     ArrayList<XYChart.Series<Number, Number>> seriesContainer = new ArrayList();
+    private File file;
+    private Multimap<String,String> multimap =  ArrayListMultimap.create();
 
     public void initialize() {
         loadTreeItems("initial 1", "initial 2", "initial 3");
         loadCheckListItems("TXT", "RTF", "DOC/DOCX", "ODT", "CSS", "HTML", "HTM", "XML", "WPS");
         loadChart();
+        setSearchButton();
     }
 
     public void loadCheckListItems(String... checkItems) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.addAll(checkItems);
         typeFiles.setItems(strings);
+    }
+
+
+    public void setSearchButton() {
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+           @Override public void handle(ActionEvent e) {
+               System.out.println("sample: "+ key.getText());
+               List<String> checkedBoxes = getCheckedBoxes();
+               if(!checkedBoxes.isEmpty()) {
+                   getFiles(key.getText(), checkedBoxes);
+               }
+           }
+       });
+    }
+
+    private List<String> getCheckedBoxes() {
+        return typeFiles.getCheckModel().getCheckedItems();
     }
 
     public void loadChart() {
@@ -85,5 +117,20 @@ public class Controller {
         }
 
         filesTree.setRoot(root);
+    }
+
+    private void getFiles(String sample, List<String> typeFiles)
+    {
+//    String path = "/Users/kreisso/Desktop/";
+//        String path = System.getProperty("user.dir");
+        String path = System.getProperty("user.home");
+        file = new File(path);
+
+        BlockingQueue<File> arrayBlockingQueue = new ArrayBlockingQueue<File>(5);
+        new Thread(new PathFinder(arrayBlockingQueue, file, typeFiles)).start();;
+
+        for (int i = 0; i < 50; i++)
+            new Thread(new FileScanner(arrayBlockingQueue, sample, multimap, typeFiles)).start();
+
     }
 }
