@@ -2,33 +2,35 @@ package sample;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckListView;
+import sample.entity.DirectoryTree;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
+import java.util.concurrent.*;
 public class Controller {
 
+    public static final int THREADS = 5;
     public TreeView<String> filesTree;
     public CheckListView<String> typeFiles;
     public AreaChart areaChart;
     public Button searchButton, chooseDirectoryButton;
     public TextField key,pathTextField;
+    public TextArea fileContent;
     ArrayList<XYChart.Series<Number, Number>> seriesContainer = new ArrayList();
     private File file;
     private Multimap<String,String> multimap =  ArrayListMultimap.create();
@@ -47,10 +49,19 @@ public class Controller {
         typeFiles.setItems(strings);
     }
 
-
+    public void loadFileContentToTextArea(String filePath) {
+        String content = "";
+        try {
+            content = new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        fileContent.setText(content);
+    }
     public void setSearchButton() {
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
            @Override public void handle(ActionEvent e) {
+               // TODO leci nullpointer gdy nic nie wbiore
                System.out.println("sample: "+ key.getText());
                List<String> checkedBoxes = getCheckedBoxes();
                if(!checkedBoxes.isEmpty()) {
@@ -131,6 +142,23 @@ public class Controller {
         }
 
         filesTree.setRoot(root);
+        //noinspection unchecked
+        filesTree.getSelectionModel().selectedItemProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
+            StringBuilder pathBuilder = new StringBuilder();
+            TreeItem<String> selectedItem = (TreeItem<String>) newValue;
+            for (TreeItem<String> item = selectedItem;
+                 item != null; item = item.getParent()) {
+
+                pathBuilder.insert(0, item.getValue());
+                pathBuilder.insert(0, "\\");
+            }
+            pathBuilder.deleteCharAt(0);
+            String path = pathBuilder.toString();
+            System.out.println(path);
+
+            loadFileContentToTextArea(path);
+            // do what ever you want
+        });
     }
 
     private void getFiles(String sample, List<String> typeFiles)
@@ -142,13 +170,23 @@ public class Controller {
         if(!pathTextField.getText().isEmpty()) {
             path = pathTextField.getText();
         }
+        DirectoryTree.createNewTree(path, getCheckedBoxes());
         file = new File(path);
 
-        BlockingQueue<File> arrayBlockingQueue = new ArrayBlockingQueue<File>(5);
-        new Thread(new PathFinder(arrayBlockingQueue, file, typeFiles)).start();;
+        BlockingQueue<File> fileQueue = new ArrayBlockingQueue<File>(5000);
 
-        for (int i = 0; i < 50; i++)
-            new Thread(new FileScanner(arrayBlockingQueue, sample, multimap, typeFiles)).start();
+        new Thread(new PathFinder(fileQueue, file, typeFiles)).start();
 
+        ExecutorService executorService = Executors.newFixedThreadPool(THREADS);
+        for (int i = 0; i < THREADS; i++)
+            executorService.execute(new FileScanner(fileQueue, sample, multimap, typeFiles));//;  new Thread().start();
+
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.MINUTES);
+            filesTree.setRoot(DirectoryTree.getTreeItem());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

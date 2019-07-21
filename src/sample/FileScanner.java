@@ -1,12 +1,11 @@
 package sample;
 
 import com.google.common.collect.Multimap;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -16,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FileScanner implements Runnable {
 
+    private File emptyFile = new File("Empty");
     private BlockingQueue<File> queue;
     private String sample;
     private Multimap<String, String> multimap;
@@ -50,7 +50,7 @@ public class FileScanner implements Runnable {
             lineNumber++;
 
             if (reader.nextLine().contains(sample))
-                System.out.println("Szukane słowo znajduje się w pliku: "+file.getPath()+" w lini "+lineNumber);
+//                System.out.println("Szukane słowo znajduje się w pliku: " + file.getPath() + " w lini " + lineNumber);
                 multimap.put(file.getPath(), String.valueOf(lineNumber));
         }
 
@@ -63,14 +63,14 @@ public class FileScanner implements Runnable {
         while (!interrupt) {
 
             try {
-                if(fileType.isEmpty()) return;
+                if (fileType.isEmpty()) return;
                 File currentFile;
                 currentFile = queue.take();
                 Optional<String> typeFile = getExtensionByStringHandling(currentFile.getPath());
 //                System.out.println("typeFile :"+typeFile);
 //                System.out.println("file name :"+currentFile.getName());
 //                if(currentFile.getFile)
-                if (currentFile.equals(new File("Empty"))) {
+                if (currentFile.equals(emptyFile)) {
                     interrupt = true;
                     queue.put(currentFile);
                 } else {

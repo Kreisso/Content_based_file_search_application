@@ -30,17 +30,15 @@ public class PathFinder implements Runnable {
                 if (listFiles[i].isDirectory()) {
                     findPath(listFiles[i]);
                 } else if (isCheckedFile(listFiles[i])) {
-//                    System.out.println("finde file :" + listFiles[i]);
                     queue.put(listFiles[i]);
                 }
-                System.out.println(listFiles[i]);
             }
         } catch (NullPointerException e) {
-            System.out.println("List lenght: "+listFiles.length);
+            System.out.println("List lenght: " + listFiles.length);
         }
     }
 
-    boolean isCheckedFile(File file) {
+    public boolean isCheckedFile(File file) {
         Optional<String> typeFile = getExtensionByStringHandling(file.getPath());
         if (!typeFile.isPresent()) return false;
         for (String fileType : filesType) {
