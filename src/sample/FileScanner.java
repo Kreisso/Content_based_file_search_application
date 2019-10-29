@@ -50,7 +50,8 @@ public class FileScanner implements Runnable {
             lineNumber++;
 
             if (reader.nextLine().contains(sample))
-//                System.out.println("Szukane słowo znajduje się w pliku: " + file.getPath() + " w lini " + lineNumber);
+                //TODO usunąć
+                System.out.println("Szukane słowo znajduje się w pliku: " + file.getPath() + " w lini " + lineNumber);
                 multimap.put(file.getPath(), String.valueOf(lineNumber));
         }
 
@@ -63,9 +64,10 @@ public class FileScanner implements Runnable {
         while (!interrupt) {
 
             try {
-                if (fileType.isEmpty()) return;
-                File currentFile;
-                currentFile = queue.take();
+                if (fileType.isEmpty()) {
+                    return;
+                }
+                File currentFile = queue.take();
                 Optional<String> typeFile = getExtensionByStringHandling(currentFile.getPath());
 //                System.out.println("typeFile :"+typeFile);
 //                System.out.println("file name :"+currentFile.getName());

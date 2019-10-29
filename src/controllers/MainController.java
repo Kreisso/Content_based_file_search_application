@@ -1,4 +1,4 @@
-package sample;
+package controllers;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -13,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckListView;
+import sample.FileScanner;
+import sample.PathFinder;
 import sample.entity.DirectoryTree;
 
 import java.io.File;
@@ -22,9 +24,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-public class Controller {
+public class MainController {
 
-    public static final int THREADS = 5;
+    private static final int THREADS = 5;
     public TreeView<String> filesTree;
     public CheckListView<String> typeFiles;
     public AreaChart areaChart;
@@ -90,14 +92,7 @@ public class Controller {
         areaChart.setTitle("Search word\n");
         areaChart.getYAxis().setLabel("number of occurrences");
         areaChart.getXAxis().setLabel("File name");
-//
-//        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-//        double test = 33;
-//
-//        for (int i = 10; i <= 120; i++) {
-//           // series.getData().add(new XYChart.Data(i, test));
-//        }
-        ////
+
         XYChart.Series seriesTest1= new XYChart.Series();
         seriesTest1.setName("Test 1");
         seriesTest1.getData().add(new XYChart.Data(1, 4));
@@ -163,8 +158,6 @@ public class Controller {
 
     private void getFiles(String sample, List<String> typeFiles)
     {
-//    String path = "/Users/kreisso/Desktop/";
-//        String path = System.getProperty("user.dir");
 
         String path = System.getProperty("user.home");
         if(!pathTextField.getText().isEmpty()) {
@@ -173,7 +166,7 @@ public class Controller {
         DirectoryTree.createNewTree(path, getCheckedBoxes());
         file = new File(path);
 
-        BlockingQueue<File> fileQueue = new ArrayBlockingQueue<File>(5000);
+        BlockingQueue<File> fileQueue = new ArrayBlockingQueue<File>(50);
 
         new Thread(new PathFinder(fileQueue, file, typeFiles)).start();
 
