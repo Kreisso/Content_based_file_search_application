@@ -7,11 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FileScanner implements Runnable {
 
@@ -28,19 +25,7 @@ public class FileScanner implements Runnable {
         this.fileType = fileType;
     }
 
-    public FileScanner(BlockingQueue<File> queue, String sample, Multimap<String, String> multimap) {
-
-        this.queue = queue;
-        this.sample = sample;
-        this.multimap = multimap;
-
-    }
-
-    public Multimap<String, String> getMultimap() {
-        return multimap;
-    }
-
-    public void FindWord(File file) throws FileNotFoundException {
+    private void FindWord(File file) throws FileNotFoundException {
 
         Scanner reader = new Scanner(new BufferedReader(new FileReader(file)));
 
@@ -53,6 +38,7 @@ public class FileScanner implements Runnable {
                 //TODO usunąć
                 System.out.println("Szukane słowo znajduje się w pliku: " + file.getPath() + " w lini " + lineNumber);
                 multimap.put(file.getPath(), String.valueOf(lineNumber));
+                //TODO dodać obsługę poprzez entity FindeFile
         }
 
         reader.close();
@@ -68,11 +54,8 @@ public class FileScanner implements Runnable {
                     return;
                 }
                 File currentFile = queue.take();
-                Optional<String> typeFile = getExtensionByStringHandling(currentFile.getPath());
-//                System.out.println("typeFile :"+typeFile);
-//                System.out.println("file name :"+currentFile.getName());
-//                if(currentFile.getFile)
                 if (currentFile.equals(emptyFile)) {
+//                    return;
                     interrupt = true;
                     queue.put(currentFile);
                 } else {
@@ -82,19 +65,6 @@ public class FileScanner implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static String getFileExtension(String fullName) {
-        checkNotNull(fullName);
-        String fileName = new File(fullName).getName();
-        int dotIndex = fileName.lastIndexOf('.');
-        return (dotIndex == -1) ? "" : fileName.substring(dotIndex + 1);
-    }
-
-    public Optional<String> getExtensionByStringHandling(String filename) {
-        return Optional.ofNullable(filename)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
 }

@@ -17,30 +17,26 @@ public class PathFinder implements Runnable {
         this.filesType = filesType;
     }
 
-    public PathFinder(BlockingQueue<File> kolejka, File sciezkaGlowna) {
-
-        this.queue = kolejka;
-        this.mainPath = sciezkaGlowna;
-    }
-
-    public void findPath(File path) throws InterruptedException {
+    private void findPath(File path) throws InterruptedException {
         File[] listFiles = path.listFiles();
-        try {
-            for (int i = 0; i < listFiles.length; i++) {
-                if (listFiles[i].isDirectory()) {
-                    findPath(listFiles[i]);
-                } else if (isCheckedFile(listFiles[i])) {
-                    queue.put(listFiles[i]);
-                }
-            }
-        } catch (NullPointerException e) {
-            System.out.println("List lenght: " + listFiles.length);
+        if (listFiles == null) {
+            return;
         }
+        for (File listFile : listFiles) {
+            if (listFile.isDirectory()) {
+                findPath(listFile);
+            } else if (isCheckedFile(listFile)) {
+                queue.put(listFile);
+            }
+        }
+
     }
 
-    public boolean isCheckedFile(File file) {
+    private boolean isCheckedFile(File file) {
         Optional<String> typeFile = getExtensionByStringHandling(file.getPath());
-        if (!typeFile.isPresent()) return false;
+        if (!typeFile.isPresent()) {
+            return false;
+        }
         for (String fileType : filesType) {
             if (typeFile.get().toLowerCase().equals(fileType.toLowerCase())) {
                 return true;
@@ -49,7 +45,7 @@ public class PathFinder implements Runnable {
         return false;
     }
 
-    public Optional<String> getExtensionByStringHandling(String filename) {
+    private Optional<String> getExtensionByStringHandling(String filename) {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));

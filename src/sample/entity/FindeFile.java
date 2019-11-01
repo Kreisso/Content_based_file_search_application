@@ -1,9 +1,11 @@
 package sample.entity;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class FindeFile {
     private FileType fileType;
+    private ArrayList<Integer> lineNumber;
     private String url;
     private Optional<String> parentUrl;
 

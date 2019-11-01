@@ -5,6 +5,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.HTMLEditor?>
 <?import org.controlsfx.control.CheckListView?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
     <top>
@@ -61,7 +62,8 @@
         </VBox>
     </top>
     <center>
-        <TextArea fx:id="fileContent" prefHeight="343.0" prefWidth="317.0" BorderPane.alignment="CENTER"/>
+        <!--<TextArea fx:id="fileContent" prefHeight="343.0" prefWidth="317.0" BorderPane.alignment="CENTER"/>-->
+        <HTMLEditor fx:id="fileContent" prefHeight="343.0" prefWidth="317.0" BorderPane.alignment="CENTER"/>
     </center>
     <left>
         <TreeView fx:id="filesTree" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />

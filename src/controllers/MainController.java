@@ -9,7 +9,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckListView;
@@ -24,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+
 public class MainController {
 
     private static final int THREADS = 5;
@@ -32,14 +37,14 @@ public class MainController {
     public AreaChart areaChart;
     public Button searchButton, chooseDirectoryButton;
     public TextField key,pathTextField;
-    public TextArea fileContent;
+    public HTMLEditor fileContent;
     ArrayList<XYChart.Series<Number, Number>> seriesContainer = new ArrayList();
     private File file;
     private Multimap<String,String> multimap =  ArrayListMultimap.create();
 
     public void initialize() {
-        loadTreeItems("initial 1", "initial 2", "initial 3");
-        loadCheckListItems("TXT", "RTF", "DOC/DOCX", "ODT", "CSS", "HTML", "HTM", "XML", "WPS");
+        loadTreeItems();
+        loadCheckListItems("TXT", "RTF", "DOC", "DOCX", "ODT", "CSS", "HTML", "HTM", "XML", "WPS", "PAGES");
         loadChart();
         setSearchButton();
         addDirectoryChooser();
@@ -58,8 +63,9 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        fileContent.setText(content);
+        fileContent.setHtmlText(content);
     }
+
     public void setSearchButton() {
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
            @Override public void handle(ActionEvent e) {
@@ -148,11 +154,11 @@ public class MainController {
                 pathBuilder.insert(0, "\\");
             }
             pathBuilder.deleteCharAt(0);
-            String path = pathBuilder.toString();
+
+            String path = pathBuilder.toString().replace("\\", "/");
             System.out.println(path);
 
             loadFileContentToTextArea(path);
-            // do what ever you want
         });
     }
 
