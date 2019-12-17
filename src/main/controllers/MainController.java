@@ -17,17 +17,21 @@ import javafx.scene.web.HTMLEditor;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import main.boundary.FileScanner;
+import main.boundary.JsonService;
 import main.boundary.PathFinder;
 import main.entity.DirectoryTree;
 import org.controlsfx.control.CheckListView;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,13 +45,15 @@ public class MainController {
     public Button searchButton, chooseDirectoryButton, saveButton;
     public TextField key, pathTextField;
     public HTMLEditor fileContent;
-    private ArrayList<XYChart.Series<String, Number>> seriesContainer = new ArrayList();
+    private ArrayList<XYChart.Series<String, Number>> seriesContainer = new ArrayList<>();
     private Multimap<String, String> multimap = ArrayListMultimap.create();
     private String pathFile;
+    private InputStream inputStream;
 
     public void initialize() {
         loadTreeItems();
         loadCheckListItems("TXT", "RTF", "DOC", "DOCX", "ODT", "CSS", "HTML", "HTM", "XML", "WPS", "PAGES");
+        loadJson();
         loadChart();
         setSearchButton();
         setSaveButton();
@@ -79,12 +85,19 @@ public class MainController {
                        .replace("</body></html>", "")
                        .isEmpty();
                System.out.println("sample: " + key.getText());
+               addSampleToHistory(key.getText());
                List<String> checkedBoxes = getCheckedBoxes();
                if (!checkedBoxes.isEmpty()) {
                    getFiles(key.getText(), checkedBoxes);
                }
            }
-       });
+        });
+    }
+
+    private void addSampleToHistory(String key) {
+        JsonService.addWord(key);
+        loadChart();
+
     }
 
     private void addDirectoryChooser() {
@@ -136,33 +149,35 @@ public class MainController {
         areaChart.getYAxis().setLabel("Number of use");
         areaChart.getXAxis().setLabel("Word");
 
-        XYChart.Series seriesTest1 = new XYChart.Series();
-        seriesTest1.setName("Test 1");
-        seriesTest1.getData().add(new XYChart.Data("Test", 1));
-        seriesTest1.getData().add(new XYChart.Data("Test 2", 10));
-        seriesTest1.getData().add(new XYChart.Data("Inżynier", 1));
+        XYChart.Series historyChart = new XYChart.Series();
+        historyChart.setName("History");
 
+        Map<String, Long> wordsToCount = JsonService.getWordsToCount();
 
-//        XYChart.Series seriesTest2 = new XYChart.Series();
-//        seriesTest2.setName("Test 2");
-//        seriesTest2.getData().add(new XYChart.Data(1, 20));
-//        seriesTest2.getData().add(new XYChart.Data(3, 15));
-//        seriesTest2.getData().add(new XYChart.Data(6, 13));
-//        seriesTest2.getData().add(new XYChart.Data(9, 12));
-//        seriesTest2.getData().add(new XYChart.Data(12, 14));
-//        seriesTest2.getData().add(new XYChart.Data(15, 18));
-//        seriesTest2.getData().add(new XYChart.Data(18, 25));
-//        seriesTest2.getData().add(new XYChart.Data(21, 25));
-//        seriesTest2.getData().add(new XYChart.Data(24, 23));
-//        seriesTest2.getData().add(new XYChart.Data(27, 26));
-//        seriesTest2.getData().add(new XYChart.Data(31, 26));
+        wordsToCount.entrySet().stream()
+                .forEach(object -> historyChart.getData().add(new XYChart.Data(object.getKey(), object.getValue())));
 
-//        seriesContainer.add(seriesTest2);
-        seriesContainer.add(seriesTest1);
+        seriesContainer.add(historyChart);
 
         for (XYChart.Series<String, Number> numberNumberSeries : seriesContainer) {
             areaChart.getData().add(numberNumberSeries);
         }
+    }
+
+    private void loadJson() {
+        inputStream = getClass().getResourceAsStream("../../resources/json/history.json");
+        JSONParser jsonParser = new JSONParser();
+        try {
+            JSONArray jsonArray = (JSONArray) jsonParser.parse(
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            JsonService.setWordsToCount(jsonArray);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveJson() {
+
     }
 
     private void loadTreeItems(String... rootItems) {
