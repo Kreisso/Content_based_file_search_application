@@ -34,4 +34,17 @@ public class JsonService {
         }
     }
 
+    public static JSONArray prepareJsonToSave() {
+        JSONArray jsonArray = new JSONArray();
+        wordsToCount.entrySet().stream().forEach(element -> jsonArray.add(createJsonObject(element)));
+        return jsonArray;
+    }
+
+    private static Object createJsonObject(Map.Entry<String, Long> element) {
+        JSONObject word = new JSONObject();
+        word.put("value", element.getKey());
+        word.put("count", element.getValue());
+        return word;
+    }
+
 }

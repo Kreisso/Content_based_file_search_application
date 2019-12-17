@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 public class MainController {
 
     private static final int THREADS = 5;
+    public static final String PATH_TO_HISTORY = "../../resources/json/history.json";
     public TreeView<String> filesTree;
     public CheckListView<String> typeFiles;
     public AreaChart areaChart;
@@ -97,7 +98,12 @@ public class MainController {
     private void addSampleToHistory(String key) {
         JsonService.addWord(key);
         loadChart();
+        saveHistory();
 
+    }
+
+    private void saveHistory() {
+        saveJson();
     }
 
     private void addDirectoryChooser() {
@@ -165,7 +171,7 @@ public class MainController {
     }
 
     private void loadJson() {
-        inputStream = getClass().getResourceAsStream("../../resources/json/history.json");
+        inputStream = getClass().getResourceAsStream(PATH_TO_HISTORY);
         JSONParser jsonParser = new JSONParser();
         try {
             JSONArray jsonArray = (JSONArray) jsonParser.parse(
@@ -177,7 +183,15 @@ public class MainController {
     }
 
     private void saveJson() {
-
+        try {
+            FileWriter writer = new FileWriter(
+                    new File(this.getClass().getResource(PATH_TO_HISTORY).getPath()));
+            writer.write(JsonService.prepareJsonToSave().toJSONString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadTreeItems(String... rootItems) {
