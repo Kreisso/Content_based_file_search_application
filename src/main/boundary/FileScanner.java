@@ -43,6 +43,7 @@ public class FileScanner implements Runnable {
             List<String> temporaryList = List.of(line.split(" "));
             Set<String> splitString = new HashSet<>(temporaryList);
             splitString = splitString.stream().filter(s -> LCS.computeMatching(s, sample)).collect(Collectors.toSet());
+            System.out.println("rozmiar seta: " + splitString.size());
             if (splitString.size() > 0)
                 System.out.println("Szukane słowo znajduje się w pliku: " + file.getPath() + " w lini " + lineNumber);
             filePathToLineNumber.put(file.getPath(), String.valueOf(lineNumber));
