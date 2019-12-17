@@ -1,4 +1,4 @@
-package sample;
+package main.boundary;
 
 import com.google.common.collect.Multimap;
 import sample.entity.FindeFile;

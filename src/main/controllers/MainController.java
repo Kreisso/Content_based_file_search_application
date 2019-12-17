@@ -1,4 +1,4 @@
-package controllers;
+package main.controllers;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -16,10 +16,10 @@ import javafx.scene.control.TreeView;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import main.boundary.FileScanner;
+import main.boundary.PathFinder;
+import main.entity.DirectoryTree;
 import org.controlsfx.control.CheckListView;
-import sample.FileScanner;
-import sample.PathFinder;
-import sample.entity.DirectoryTree;
 
 import java.io.File;
 import java.io.IOException;
