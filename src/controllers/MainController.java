@@ -38,8 +38,7 @@ public class MainController {
     public Button searchButton, chooseDirectoryButton;
     public TextField key,pathTextField;
     public HTMLEditor fileContent;
-    ArrayList<XYChart.Series<Number, Number>> seriesContainer = new ArrayList();
-    private File file;
+    private ArrayList<XYChart.Series<Number, Number>> seriesContainer = new ArrayList();
     private Multimap<String,String> multimap =  ArrayListMultimap.create();
 
     public void initialize() {
@@ -50,13 +49,13 @@ public class MainController {
         addDirectoryChooser();
     }
 
-    public void loadCheckListItems(String... checkItems) {
+    private void loadCheckListItems(String... checkItems) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.addAll(checkItems);
         typeFiles.setItems(strings);
     }
 
-    public void loadFileContentToTextArea(String filePath) {
+    private void loadFileContentToTextArea(String filePath) {
         String content = "";
         try {
             content = new String(Files.readAllBytes(Paths.get(filePath)));
@@ -66,10 +65,9 @@ public class MainController {
         fileContent.setHtmlText(content);
     }
 
-    public void setSearchButton() {
+    private void setSearchButton() {
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
            @Override public void handle(ActionEvent e) {
-               // TODO leci nullpointer gdy nic nie wbiore
                System.out.println("sample: "+ key.getText());
                List<String> checkedBoxes = getCheckedBoxes();
                if(!checkedBoxes.isEmpty()) {
@@ -94,7 +92,7 @@ public class MainController {
         return typeFiles.getCheckModel().getCheckedItems();
     }
 
-    public void loadChart() {
+    private void loadChart() {
         areaChart.setTitle("Search word\n");
         areaChart.getYAxis().setLabel("number of occurrences");
         areaChart.getXAxis().setLabel("File name");
@@ -135,8 +133,8 @@ public class MainController {
          }
     }
 
-    public void loadTreeItems(String... rootItems) {
-        TreeItem<String> root = new TreeItem<String>("Root Node");
+    private void loadTreeItems(String... rootItems) {
+        TreeItem<String> root = new TreeItem<String>("Wyniki");
         root.setExpanded(true);
         for (String itemString : rootItems) {
             root.getChildren().add(new TreeItem<String>(itemString));
@@ -170,7 +168,7 @@ public class MainController {
             path = pathTextField.getText();
         }
         DirectoryTree.createNewTree(path, getCheckedBoxes());
-        file = new File(path);
+        File file = new File(path);
 
         BlockingQueue<File> fileQueue = new ArrayBlockingQueue<File>(50);
 
