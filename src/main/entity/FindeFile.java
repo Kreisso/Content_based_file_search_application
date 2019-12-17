@@ -1,4 +1,4 @@
-package sample.entity;
+package main.entity;
 
 import java.util.ArrayList;
 import java.util.Optional;

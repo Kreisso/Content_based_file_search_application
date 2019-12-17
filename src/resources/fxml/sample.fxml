@@ -7,7 +7,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.HTMLEditor?>
 <?import org.controlsfx.control.CheckListView?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+            prefWidth="960.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.controllers.MainController">
     <top>
         <VBox prefHeight="57.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <children>
@@ -15,7 +17,7 @@
                     <menus>
                         <Menu mnemonicParsing="false" text="File">
                             <items>
-                                <MenuItem mnemonicParsing="false" text="Close" />
+                                <MenuItem mnemonicParsing="false" text="Close"/>
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Edit">

@@ -1,4 +1,4 @@
-package sample.entity;
+package main.entity;
 
 import javafx.scene.control.TreeItem;
 
@@ -19,7 +19,7 @@ public class DirectoryTree {
         filesType = types;
 
         File rootFile = new File(rootName);
-        File fileList[] = rootFile.listFiles();
+        File[] fileList = rootFile.listFiles();
 
         // create tree
         fileList = getFiles(fileList);

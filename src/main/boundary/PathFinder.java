@@ -1,4 +1,4 @@
-package sample;
+package main.boundary;
 
 import java.io.File;
 import java.util.List;
