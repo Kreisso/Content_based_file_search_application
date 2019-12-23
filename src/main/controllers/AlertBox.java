@@ -1,4 +1,4 @@
-package main.boundary;
+package main.controllers;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

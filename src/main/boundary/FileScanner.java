@@ -1,7 +1,6 @@
 package main.boundary;
 
 import com.google.common.collect.Multimap;
-import main.entity.FindeFile;
 import main.entity.LCS;
 
 import java.io.BufferedReader;
@@ -31,10 +30,7 @@ public class FileScanner implements Runnable {
     }
 
     private void FindWord(File file) throws FileNotFoundException {
-
         Scanner reader = new Scanner(new BufferedReader(new FileReader(file)));
-        FindeFile findeFile = new FindeFile();
-
         int lineNumber = 0;
 
         while (reader.hasNext()) {
@@ -64,7 +60,6 @@ public class FileScanner implements Runnable {
                 }
                 File currentFile = queue.take();
                 if (currentFile.equals(emptyFile)) {
-//                    return;
                     interrupt = true;
                     queue.put(currentFile);
                 } else {

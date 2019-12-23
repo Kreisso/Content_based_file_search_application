@@ -16,10 +16,14 @@ import javafx.scene.control.TreeView;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import main.boundary.FileScanner;
+import main.boundary.FileUtils;
 import main.boundary.JsonService;
 import main.boundary.PathFinder;
 import main.entity.DirectoryTree;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.controlsfx.control.CheckListView;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -28,6 +32,7 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +54,6 @@ public class MainController {
     private ArrayList<XYChart.Series<String, Number>> seriesContainer = new ArrayList<>();
     private Multimap<String, String> multimap = ArrayListMultimap.create();
     private String pathFile;
-    private InputStream inputStream;
 
     public void initialize() {
         loadTreeItems();
@@ -68,30 +72,49 @@ public class MainController {
     }
 
     private void loadFileContentToTextArea(String filePath) {
-        String content = "";
-        try {
-            content = new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        StringBuilder content = new StringBuilder();
+        Path path = Paths.get(filePath);
+        String fileType = FileUtils.getExtensionByStringHandling(filePath).get();
+        if ("docx".equals(fileType) || "doc".equals(fileType)) {
+            try {
+                FileInputStream fis = new FileInputStream(pathFile);
+                XWPFDocument docx = new XWPFDocument(fis);
+
+                XWPFWordExtractor we = new XWPFWordExtractor(docx);
+                content.append(we.getText());
+
+            } catch (FileNotFoundException ignored) {
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                content = new StringBuilder(new String(Files.readAllBytes(path)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        fileContent.setHtmlText(content);
+        fileContent.setHtmlText(content.toString());
     }
 
     private void setSearchButton() {
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
-           @Override public void handle(ActionEvent e) {
-               loadTreeItems();
-               fileContent.getHtmlText()
-                       .replace("<html><head></head><body>", "")
-                       .replace("</body></html>", "")
-                       .isEmpty();
-               System.out.println("sample: " + key.getText());
-               addSampleToHistory(key.getText());
-               List<String> checkedBoxes = getCheckedBoxes();
-               if (!checkedBoxes.isEmpty()) {
-                   getFiles(key.getText(), checkedBoxes);
-               }
-           }
+            @Override
+            public void handle(ActionEvent e) {
+                loadTreeItems();
+                fileContent.getHtmlText()
+                        .replace("<html><head></head><body>", "")
+                        .replace("</body></html>", "")
+                        .isEmpty();
+                System.out.println("sample: " + key.getText());
+                addSampleToHistory(key.getText());
+                List<String> checkedBoxes = getCheckedBoxes();
+                if (!checkedBoxes.isEmpty()) {
+                    getFiles(key.getText(), checkedBoxes);
+                }
+            }
         });
     }
 
@@ -111,23 +134,20 @@ public class MainController {
         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
         chooseDirectoryButton.setOnAction(e -> {
-            File selectedDirectory = directoryChooser.showDialog(Stage.getWindows().filtered(window -> window.isShowing()).get(0));
+            File selectedDirectory = directoryChooser.showDialog(Stage.getWindows().filtered(Window::isShowing).get(0));
             pathTextField.setText(selectedDirectory.getAbsolutePath());
 
         });
     }
 
     private void setSaveButton() {
-        saveButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                if (pathFile.equals("")) {
-                    return;
-                }
-                String stringHtml = fileContent.getHtmlText();
-                saveFile(stringHtml);
-                System.out.println("plik : " + pathFile + " zapisany");
+        saveButton.setOnAction(e -> {
+            if (pathFile.equals("")) {
+                return;
             }
+            String stringHtml = fileContent.getHtmlText();
+            saveFile(stringHtml);
+            System.out.println("plik : " + pathFile + " zapisany");
         });
     }
 
@@ -150,6 +170,7 @@ public class MainController {
         return typeFiles.getCheckModel().getCheckedItems();
     }
 
+
     private void loadChart() {
         areaChart.setTitle("Search words\n");
         areaChart.getYAxis().setLabel("Number of use");
@@ -160,13 +181,13 @@ public class MainController {
 
         Map<String, Long> wordsToCount = JsonService.getWordsToCount();
 
-        wordsToCount.entrySet().stream()
-                .forEach(object -> historyChart.getData().add(new XYChart.Data(object.getKey(), object.getValue())));
+        wordsToCount.forEach((key1, value) -> historyChart.getData().add(new XYChart.Data(key1, value)));
 
         seriesContainer.add(historyChart);
 
         for (XYChart.Series<String, Number> numberNumberSeries : seriesContainer) {
             try {
+                //noinspection unchecked
                 areaChart.getData().add(numberNumberSeries);
             } catch (IllegalArgumentException e) {
                 System.out.println("Refresh error:" + e.getMessage());
@@ -175,7 +196,7 @@ public class MainController {
     }
 
     private void loadJson() {
-        inputStream = getClass().getResourceAsStream(PATH_TO_HISTORY);
+        InputStream inputStream = getClass().getResourceAsStream(PATH_TO_HISTORY);
         JSONParser jsonParser = new JSONParser();
         try {
             JSONArray jsonArray = (JSONArray) jsonParser.parse(
@@ -199,6 +220,7 @@ public class MainController {
 
     private void loadTreeItems(String... rootItems) {
         pathFile = "";
+        filesTree.refresh();
         TreeItem<String> root = new TreeItem<String>("Results");
         root.setExpanded(true);
         for (String itemString : rootItems) {
@@ -225,16 +247,15 @@ public class MainController {
         });
     }
 
-    private void getFiles(String sample, List<String> typeFiles)
-    {
-
+    private void getFiles(String sample, List<String> typeFiles) {
+        multimap = ArrayListMultimap.create();
         String path = System.getProperty("user.home");
-        if(!pathTextField.getText().isEmpty()) {
+        if (!pathTextField.getText().isEmpty()) {
             path = pathTextField.getText();
         }
         File file = new File(path);
 
-        BlockingQueue<File> fileQueue = new ArrayBlockingQueue<File>(50);
+        BlockingQueue<File> fileQueue = new ArrayBlockingQueue<>(50);
 
         new Thread(new PathFinder(fileQueue, file, typeFiles)).start();
 

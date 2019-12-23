@@ -2,6 +2,7 @@ package main.entity;
 
 import com.google.common.collect.Multimap;
 import javafx.scene.control.TreeItem;
+import main.boundary.FileUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -63,19 +64,8 @@ public class DirectoryTree {
 
 
     private static boolean isCheckedFile(File file, Multimap<String, String> multimap) {
-        Optional<String> typeFile = getExtensionByStringHandling(file.getPath());
+        Optional<String> typeFile = FileUtils.getExtensionByStringHandling(file.getPath());
         if (!typeFile.isPresent()) return false;
         return multimap.containsKey(file.getPath());
-//        for (String fileType : filesType) {
-//            if (typeFile.get().toLowerCase().equals(fileType.toLowerCase())) {
-//                return true;
-//            }
-//        }
-    }
-
-    private static Optional<String> getExtensionByStringHandling(String filename) {
-        return Optional.ofNullable(filename)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 }
