@@ -166,7 +166,11 @@ public class MainController {
         seriesContainer.add(historyChart);
 
         for (XYChart.Series<String, Number> numberNumberSeries : seriesContainer) {
-            areaChart.getData().add(numberNumberSeries);
+            try {
+                areaChart.getData().add(numberNumberSeries);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Refresh error:" + e.getMessage());
+            }
         }
     }
 
@@ -187,8 +191,7 @@ public class MainController {
             FileWriter writer = new FileWriter(
                     new File(this.getClass().getResource(PATH_TO_HISTORY).getPath()));
             writer.write(JsonService.prepareJsonToSave().toJSONString());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -229,7 +232,6 @@ public class MainController {
         if(!pathTextField.getText().isEmpty()) {
             path = pathTextField.getText();
         }
-        DirectoryTree.createNewTree(path, getCheckedBoxes());
         File file = new File(path);
 
         BlockingQueue<File> fileQueue = new ArrayBlockingQueue<File>(50);
@@ -243,6 +245,7 @@ public class MainController {
         executorService.shutdown();
         try {
             executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.MINUTES);
+            DirectoryTree.createNewTree(path, getCheckedBoxes(), multimap);
             filesTree.setRoot(DirectoryTree.getTreeItem());
         } catch (InterruptedException e) {
             e.printStackTrace();

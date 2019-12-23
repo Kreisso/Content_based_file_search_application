@@ -36,7 +36,7 @@ public class JsonService {
 
     public static JSONArray prepareJsonToSave() {
         JSONArray jsonArray = new JSONArray();
-        wordsToCount.entrySet().stream().forEach(element -> jsonArray.add(createJsonObject(element)));
+        wordsToCount.entrySet().forEach(element -> jsonArray.add(createJsonObject(element)));
         return jsonArray;
     }
 
