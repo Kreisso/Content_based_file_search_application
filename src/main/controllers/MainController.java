@@ -9,10 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -40,6 +37,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class MainController {
 
@@ -51,9 +49,12 @@ public class MainController {
     public Button searchButton, chooseDirectoryButton, saveButton;
     public TextField key, pathTextField;
     public HTMLEditor fileContent;
+    public MenuItem deleteHistory, about;
     private ArrayList<XYChart.Series<String, Number>> seriesContainer = new ArrayList<>();
     private Multimap<String, String> multimap = ArrayListMultimap.create();
     private String pathFile;
+    private final String MESSAGE_IN_ABOUT = "Maciej Polak \n" +
+            "Praca inżynierska";
 
     public void initialize() {
         loadTreeItems();
@@ -62,6 +63,7 @@ public class MainController {
         loadChart();
         setSearchButton();
         setSaveButton();
+        setMenuItem();
         addDirectoryChooser();
     }
 
@@ -115,6 +117,18 @@ public class MainController {
                     getFiles(key.getText(), checkedBoxes);
                 }
             }
+        });
+    }
+
+    private void setMenuItem() {
+        deleteHistory.setOnAction(e -> {
+            areaChart.getData().clear();
+            JsonService.clearHistory();
+            saveHistory();
+        });
+
+        about.setOnAction(e -> {
+            AlertBox.display("About", MESSAGE_IN_ABOUT);
         });
     }
 
@@ -180,10 +194,13 @@ public class MainController {
         historyChart.setName("History");
 
         Map<String, Long> wordsToCount = JsonService.getWordsToCount();
+        List<XYChart.Data> chartData = wordsToCount.entrySet().stream()
+                .map(wordToCount -> new XYChart.Data(wordToCount.getKey(), wordToCount.getValue()))
+                .collect(Collectors.toList());
 
-        wordsToCount.forEach((key1, value) -> historyChart.getData().add(new XYChart.Data(key1, value)));
-
+        historyChart.getData().addAll(chartData);
         seriesContainer.add(historyChart);
+
 
         for (XYChart.Series<String, Number> numberNumberSeries : seriesContainer) {
             try {

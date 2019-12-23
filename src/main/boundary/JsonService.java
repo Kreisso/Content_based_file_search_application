@@ -47,4 +47,7 @@ public class JsonService {
         return word;
     }
 
+    public static void clearHistory() {
+        wordsToCount = new HashMap<>();
+    }
 }
