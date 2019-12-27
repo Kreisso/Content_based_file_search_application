@@ -14,9 +14,15 @@ import java.util.logging.Logger;
 public class ButtonProvider {
     public static final String NO_FILE_EXTENSION_SELECTED_ERROR_MESSAGE = "No file extension selected";
     public static final String APPLICATION_NAME = "Content based file search application";
-    public static final String SOLLUTION = "Select the extension from the right side bar";
-    private final String MESSAGE_IN_ABOUT = "Maciej Polak \n" +
-            "Praca inżynierska";
+    public static final String SOLLUTION = "Select the one or more extension from the right side bar";
+    public static final String SAVE_TITLE = "Save File";
+    public static final String SAVE_HEADER = "Do you want save this file?";
+    public static final String SAVE_MESSAGE = "Content will by override";
+    private final String MESSAGE_IN_ABOUT = "Proudly developed by Maciej Polak \n" +
+            "Engineering work: \n" +
+            "APLIKACJA DO WYSZUKIWANIA PLIKÓW PO ZAWARTOŚCI \n" +
+            "CONTENT BASED FILE SEARCH APPLICATION \n\n" +
+            "Doctor Finder 1.0";
     private final DoctorFinderProvider doctorFinderProvider;
 
     private final JsonService jsonService = new JsonService();
@@ -51,6 +57,8 @@ public class ButtonProvider {
             doctorFinderProvider.areaChart.getData().clear();
             JsonService.clearHistory();
             saveHistory();
+            AlertBox.display("Delete history", "History correctly removed", "");
+
         });
 
         doctorFinderProvider.about.setOnAction(e -> {
@@ -60,6 +68,10 @@ public class ButtonProvider {
 
     public void setSaveButton() {
         doctorFinderProvider.saveButton.setOnAction(e -> {
+            boolean isConfirmed = AlertBox.displayConfirmAlert(SAVE_TITLE, SAVE_HEADER, SAVE_MESSAGE);
+            if (!isConfirmed) {
+                return;
+            }
             if (doctorFinderProvider.getPathFile().equals("")) {
                 return;
             }
@@ -71,7 +83,7 @@ public class ButtonProvider {
                 return;
             }
             System.out.println("plik : " + doctorFinderProvider.getPathFile() + " zapisany");
-            AlertBox.display("Save File", "File saved correctly: \n" + doctorFinderProvider.getPathFile(), "");
+            AlertBox.display("Save File", "File saved correctly", doctorFinderProvider.getPathFile());
         });
     }
 

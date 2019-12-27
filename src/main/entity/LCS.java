@@ -29,7 +29,7 @@ public class LCS {
             } else if (opt[i + 1][j] >= opt[i][j + 1]) i++;
             else j++;
         }
-        System.out.println("Znaleziony :" + findMatch + " dla :" + sample.length() * MATCHING_PERCENT + " wychodzi :" + (findMatch.length() >= sample.length() * MATCHING_PERCENT));
+        System.out.println("Znaleziony w:" + word + " słowo: " + findMatch + " dla :" + sample.length() * MATCHING_PERCENT + " wychodzi :" + (findMatch.length() >= sample.length() * MATCHING_PERCENT));
         return findMatch.length() >= sample.length() * MATCHING_PERCENT;
     }
 

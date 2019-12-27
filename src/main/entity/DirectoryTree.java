@@ -13,9 +13,11 @@ import java.util.function.Predicate;
 public class DirectoryTree {
     static TreeItem<String> root;
     static List<String> filesType;
+//    private static final Image folderIcon =
+//            new Image(DirectoryTree.class.getResourceAsStream("image/foolderIcon.png"));
 
     public static void createNewTree(String rootName, List<String> types, Multimap<String, String> multimap) {
-        //Node rootIcon =  new ImageView(new Image(DirectoryTree.class.getResourceAsStream("res/img/iconfinder_icon-folder_211608.png")));
+        //Node rootIcon =  new ImageView(new Image(DirectoryTree.class.getResourceAsStream("res/img/foolderIcon.png")));
         //root  = new TreeItem<String>(rootName, rootIcon);
         root = new TreeItem<String>(rootName);
         root.setExpanded(true);

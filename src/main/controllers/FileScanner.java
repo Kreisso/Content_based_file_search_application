@@ -1,6 +1,7 @@
 package main.controllers;
 
 import com.google.common.collect.Multimap;
+import main.entity.FindeFile;
 import main.entity.LCS;
 
 import java.io.BufferedReader;
@@ -30,6 +31,7 @@ public class FileScanner implements Runnable {
     }
 
     private void FindWord(File file) throws FileNotFoundException {
+        FindeFile findeFile = new FindeFile();
         Scanner reader = new Scanner(new BufferedReader(new FileReader(file)));
         int lineNumber = 0;
 
