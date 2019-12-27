@@ -2,7 +2,8 @@ package main.boundary;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import main.controllers.MainController;
+import main.controllers.FileScanner;
+import main.controllers.PathFinder;
 import main.entity.DirectoryTree;
 
 import java.io.File;
@@ -20,13 +21,13 @@ public class FileUtils {
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
-    public static void getFiles(MainController mainController) {
-        String sample = mainController.getKey();
-        List<String> typeFiles = mainController.getCheckedBoxes();
+    public static void getFiles(DoctorFinderProvider doctorFinderProvider) {
+        String sample = doctorFinderProvider.getKey();
+        List<String> typeFiles = doctorFinderProvider.getCheckedBoxes();
         multimap = ArrayListMultimap.create();
         String path = System.getProperty("user.home");
-        if (!mainController.pathTextField.getText().isEmpty()) {
-            path = mainController.pathTextField.getText();
+        if (!doctorFinderProvider.pathTextField.getText().isEmpty()) {
+            path = doctorFinderProvider.pathTextField.getText();
         }
         File file = new File(path);
 
@@ -41,8 +42,8 @@ public class FileUtils {
         executorService.shutdown();
         try {
             executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.MINUTES);
-            DirectoryTree.createNewTree(path, mainController.getCheckedBoxes(), multimap);
-            mainController.filesTree.setRoot(DirectoryTree.getTreeItem());
+            DirectoryTree.createNewTree(path, doctorFinderProvider.getCheckedBoxes(), multimap);
+            doctorFinderProvider.filesTree.setRoot(DirectoryTree.getTreeItem());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

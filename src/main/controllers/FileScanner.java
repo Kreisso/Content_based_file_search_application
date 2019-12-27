@@ -1,4 +1,4 @@
-package main.boundary;
+package main.controllers;
 
 import com.google.common.collect.Multimap;
 import main.entity.LCS;

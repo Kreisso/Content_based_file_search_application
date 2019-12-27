@@ -3,7 +3,6 @@ package main.boundary;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import main.controllers.JsonService;
-import main.controllers.MainController;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,28 +17,28 @@ public class ButtonProvider {
     public static final String SOLLUTION = "Select the extension from the right side bar";
     private final String MESSAGE_IN_ABOUT = "Maciej Polak \n" +
             "Praca inżynierska";
-    private final MainController mainController;
+    private final DoctorFinderProvider doctorFinderProvider;
 
     private final JsonService jsonService = new JsonService();
 
-    public ButtonProvider(MainController mainController) {
-        this.mainController = mainController;
+    public ButtonProvider(DoctorFinderProvider doctorFinderProvider) {
+        this.doctorFinderProvider = doctorFinderProvider;
     }
 
     public void setSearchButton() {
-        mainController.searchButton.setOnAction(new EventHandler<ActionEvent>() {
+        doctorFinderProvider.searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                mainController.loadTreeItems();
-                mainController.fileContent.getHtmlText()
+                doctorFinderProvider.loadTreeItems();
+                doctorFinderProvider.fileContent.getHtmlText()
                         .replace("<html><head></head><body>", "")
                         .replace("</body></html>", "")
                         .isEmpty();
-                System.out.println("sample: " + mainController.key.getText());
-                addSampleToHistory(mainController.key.getText());
-                List<String> checkedBoxes = mainController.getCheckedBoxes();
+                System.out.println("sample: " + doctorFinderProvider.key.getText());
+                addSampleToHistory(doctorFinderProvider.key.getText());
+                List<String> checkedBoxes = doctorFinderProvider.getCheckedBoxes();
                 if (!checkedBoxes.isEmpty()) {
-                    FileUtils.getFiles(mainController);
+                    FileUtils.getFiles(doctorFinderProvider);
                 } else {
                     AlertBox.displayErrorAlert(NO_FILE_EXTENSION_SELECTED_ERROR_MESSAGE, SOLLUTION);
                 }
@@ -48,31 +47,31 @@ public class ButtonProvider {
     }
 
     public void setMenuItem() {
-        mainController.deleteHistory.setOnAction(e -> {
-            mainController.areaChart.getData().clear();
+        doctorFinderProvider.deleteHistory.setOnAction(e -> {
+            doctorFinderProvider.areaChart.getData().clear();
             JsonService.clearHistory();
             saveHistory();
         });
 
-        mainController.about.setOnAction(e -> {
+        doctorFinderProvider.about.setOnAction(e -> {
             AlertBox.display("About", APPLICATION_NAME, MESSAGE_IN_ABOUT);
         });
     }
 
     public void setSaveButton() {
-        mainController.saveButton.setOnAction(e -> {
-            if (mainController.getPathFile().equals("")) {
+        doctorFinderProvider.saveButton.setOnAction(e -> {
+            if (doctorFinderProvider.getPathFile().equals("")) {
                 return;
             }
-            String stringHtml = mainController.fileContent.getHtmlText();
+            String stringHtml = doctorFinderProvider.fileContent.getHtmlText();
             try {
-                saveFile(stringHtml, mainController.getPathFile());
+                saveFile(stringHtml, doctorFinderProvider.getPathFile());
             } catch (IOException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DoctorFinderProvider.class.getName()).log(Level.SEVERE, null, ex);
                 return;
             }
-            System.out.println("plik : " + mainController.getPathFile() + " zapisany");
-            AlertBox.display("Save File", "File saved correctly: \n" + mainController.getPathFile(), "");
+            System.out.println("plik : " + doctorFinderProvider.getPathFile() + " zapisany");
+            AlertBox.display("Save File", "File saved correctly: \n" + doctorFinderProvider.getPathFile(), "");
         });
     }
 
@@ -93,7 +92,7 @@ public class ButtonProvider {
 
     private void addSampleToHistory(String key) {
         JsonService.addWord(key);
-        mainController.loadChart();
+        doctorFinderProvider.loadChart();
         saveHistory();
 
     }

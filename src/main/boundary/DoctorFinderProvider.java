@@ -1,4 +1,4 @@
-package main.controllers;
+package main.boundary;
 
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -10,8 +10,7 @@ import javafx.scene.web.HTMLEditor;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import main.boundary.ButtonProvider;
-import main.boundary.FileUtils;
+import main.controllers.JsonService;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.controlsfx.control.CheckListView;
@@ -29,7 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MainController {
+public class DoctorFinderProvider {
 
     private final ButtonProvider buttonProvider = new ButtonProvider(this);
     private JsonService jsonService = new JsonService();
