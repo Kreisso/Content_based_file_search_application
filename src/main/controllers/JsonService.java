@@ -1,12 +1,17 @@
-package main.boundary;
+package main.controllers;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JsonService {
+    public static final String PATH_TO_HISTORY = "../../resources/json/history.json";
     private static Map<String, Long> wordsToCount = new HashMap<>();
 
     public static void setWordsToCount(JSONArray arrayOfWords) {
@@ -50,4 +55,29 @@ public class JsonService {
     public static void clearHistory() {
         wordsToCount = new HashMap<>();
     }
+
+
+    public void saveJson() {
+        try {
+            FileWriter writer = new FileWriter(
+                    new File(this.getClass().getResource(PATH_TO_HISTORY).getPath()));
+            writer.write(JsonService.prepareJsonToSave().toJSONString());
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadJson() {
+        InputStream inputStream = getClass().getResourceAsStream(PATH_TO_HISTORY);
+        JSONParser jsonParser = new JSONParser();
+        try {
+            JSONArray jsonArray = (JSONArray) jsonParser.parse(
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            JsonService.setWordsToCount(jsonArray);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

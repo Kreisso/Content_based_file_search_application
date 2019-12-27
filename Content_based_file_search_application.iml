@@ -8,8 +8,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="controlsfx-8.40.14" level="project" />
-    <orderEntry type="library" name="google-collections-1.0" level="project" />
     <orderEntry type="library" name="com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="poi-ooxml-3.15" level="project" />
     <orderEntry type="library" name="poi-3.15" level="project" />
@@ -17,5 +15,7 @@
     <orderEntry type="library" name="poi-scratchpad-3.15" level="project" />
     <orderEntry type="library" name="ooxml-schemas-1.1" level="project" />
     <orderEntry type="library" name="xmlbeans-2.6.0" level="project" />
+    <orderEntry type="library" name="controlsfx-8.40.14" level="project" />
+    <orderEntry type="library" name="google-collections-1.0" level="project" />
   </component>
 </module>

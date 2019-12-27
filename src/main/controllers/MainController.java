@@ -1,12 +1,8 @@
 package main.controllers;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -14,35 +10,29 @@ import javafx.scene.web.HTMLEditor;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import main.boundary.FileScanner;
+import main.boundary.ButtonProvider;
 import main.boundary.FileUtils;
-import main.boundary.JsonService;
-import main.boundary.PathFinder;
-import main.entity.DirectoryTree;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.controlsfx.control.CheckListView;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MainController {
 
-    private static final int THREADS = 5;
-    public static final String PATH_TO_HISTORY = "../../resources/json/history.json";
+    private final ButtonProvider buttonProvider = new ButtonProvider(this);
+    private JsonService jsonService = new JsonService();
     public TreeView<String> filesTree;
     public CheckListView<String> typeFiles;
     public AreaChart areaChart;
@@ -51,20 +41,22 @@ public class MainController {
     public HTMLEditor fileContent;
     public MenuItem deleteHistory, about;
     private ArrayList<XYChart.Series<String, Number>> seriesContainer = new ArrayList<>();
-    private Multimap<String, String> multimap = ArrayListMultimap.create();
+
     private String pathFile;
-    private final String MESSAGE_IN_ABOUT = "Maciej Polak \n" +
-            "Praca inżynierska";
 
     public void initialize() {
+        jsonService.loadJson();
         loadTreeItems();
         loadCheckListItems("TXT", "RTF", "DOC", "DOCX", "ODT", "CSS", "HTML", "HTM", "XML", "WPS", "PAGES");
-        loadJson();
         loadChart();
-        setSearchButton();
-        setSaveButton();
-        setMenuItem();
+        buttonProvider.setSearchButton();
+        buttonProvider.setSaveButton();
+        buttonProvider.setMenuItem();
         addDirectoryChooser();
+    }
+
+    public String getPathFile() {
+        return pathFile;
     }
 
     private void loadCheckListItems(String... checkItems) {
@@ -77,7 +69,12 @@ public class MainController {
 
         StringBuilder content = new StringBuilder();
         Path path = Paths.get(filePath);
-        String fileType = FileUtils.getExtensionByStringHandling(filePath).get();
+        Optional<String> optionalFileType = FileUtils.getExtensionByStringHandling(filePath);
+        if (optionalFileType.isEmpty()) {
+            return;
+        }
+        String fileType = optionalFileType.get();
+
         if ("docx".equals(fileType) || "doc".equals(fileType)) {
             try {
                 FileInputStream fis = new FileInputStream(pathFile);
@@ -101,48 +98,6 @@ public class MainController {
         fileContent.setHtmlText(content.toString());
     }
 
-    private void setSearchButton() {
-        searchButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                loadTreeItems();
-                fileContent.getHtmlText()
-                        .replace("<html><head></head><body>", "")
-                        .replace("</body></html>", "")
-                        .isEmpty();
-                System.out.println("sample: " + key.getText());
-                addSampleToHistory(key.getText());
-                List<String> checkedBoxes = getCheckedBoxes();
-                if (!checkedBoxes.isEmpty()) {
-                    getFiles(key.getText(), checkedBoxes);
-                }
-            }
-        });
-    }
-
-    private void setMenuItem() {
-        deleteHistory.setOnAction(e -> {
-            areaChart.getData().clear();
-            JsonService.clearHistory();
-            saveHistory();
-        });
-
-        about.setOnAction(e -> {
-            AlertBox.display("About", MESSAGE_IN_ABOUT);
-        });
-    }
-
-    private void addSampleToHistory(String key) {
-        JsonService.addWord(key);
-        loadChart();
-        saveHistory();
-
-    }
-
-    private void saveHistory() {
-        saveJson();
-    }
-
     private void addDirectoryChooser() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -154,38 +109,12 @@ public class MainController {
         });
     }
 
-    private void setSaveButton() {
-        saveButton.setOnAction(e -> {
-            if (pathFile.equals("")) {
-                return;
-            }
-            String stringHtml = fileContent.getHtmlText();
-            saveFile(stringHtml);
-            System.out.println("plik : " + pathFile + " zapisany");
-        });
-    }
-
-    private void saveFile(String content) {
-        File file = new File(pathFile);
-        try {
-            FileWriter fileWriter = null;
-
-            fileWriter = new FileWriter(file);
-            fileWriter.write(content);
-            fileWriter.close();
-        } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
-    }
-
-    private List<String> getCheckedBoxes() {
+    public List<String> getCheckedBoxes() {
         return typeFiles.getCheckModel().getCheckedItems();
     }
 
 
-    private void loadChart() {
+    public void loadChart() {
         areaChart.setTitle("Search words\n");
         areaChart.getYAxis().setLabel("Number of use");
         areaChart.getXAxis().setLabel("Word");
@@ -212,30 +141,7 @@ public class MainController {
         }
     }
 
-    private void loadJson() {
-        InputStream inputStream = getClass().getResourceAsStream(PATH_TO_HISTORY);
-        JSONParser jsonParser = new JSONParser();
-        try {
-            JSONArray jsonArray = (JSONArray) jsonParser.parse(
-                    new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-            JsonService.setWordsToCount(jsonArray);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void saveJson() {
-        try {
-            FileWriter writer = new FileWriter(
-                    new File(this.getClass().getResource(PATH_TO_HISTORY).getPath()));
-            writer.write(JsonService.prepareJsonToSave().toJSONString());
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadTreeItems(String... rootItems) {
+    public void loadTreeItems(String... rootItems) {
         pathFile = "";
         filesTree.refresh();
         TreeItem<String> root = new TreeItem<String>("Results");
@@ -264,29 +170,7 @@ public class MainController {
         });
     }
 
-    private void getFiles(String sample, List<String> typeFiles) {
-        multimap = ArrayListMultimap.create();
-        String path = System.getProperty("user.home");
-        if (!pathTextField.getText().isEmpty()) {
-            path = pathTextField.getText();
-        }
-        File file = new File(path);
-
-        BlockingQueue<File> fileQueue = new ArrayBlockingQueue<>(50);
-
-        new Thread(new PathFinder(fileQueue, file, typeFiles)).start();
-
-        ExecutorService executorService = Executors.newFixedThreadPool(THREADS);
-        for (int i = 0; i < THREADS; i++)
-            executorService.execute(new FileScanner(fileQueue, sample, multimap, typeFiles));//;  new Thread().start();
-
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.MINUTES);
-            DirectoryTree.createNewTree(path, getCheckedBoxes(), multimap);
-            filesTree.setRoot(DirectoryTree.getTreeItem());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public String getKey() {
+        return key.getText();
     }
 }
