@@ -2,9 +2,9 @@ package main.entity;
 
 public class LCS {
 
-    public static final double MATCHING_PERCENT = .7;
+    public static double MATCHING_PERCENT = .9;
 
-    public static boolean computeMatching(String word, String sample) {
+    public static String computeMatching(String word, String sample) {
         StringBuilder findMatch = new StringBuilder();
         int M = word.length();
         int N = sample.length();
@@ -29,8 +29,13 @@ public class LCS {
             } else if (opt[i + 1][j] >= opt[i][j + 1]) i++;
             else j++;
         }
-        System.out.println("Znaleziony w:" + word + " słowo: " + findMatch + " dla :" + sample.length() * MATCHING_PERCENT + " wychodzi :" + (findMatch.length() >= sample.length() * MATCHING_PERCENT));
-        return findMatch.length() >= sample.length() * MATCHING_PERCENT;
+//        return findMatch.length() >= sample.length() * MATCHING_PERCENT;
+
+        if (findMatch.length() >= sample.length() * MATCHING_PERCENT) {
+            System.out.println("Znaleziony w:" + word + " słowo: " + findMatch + " dla :" + sample.length() * MATCHING_PERCENT + " wychodzi :" + (findMatch.length() >= sample.length() * MATCHING_PERCENT));
+            return word;
+        }
+        return "";
     }
 
 }

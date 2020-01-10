@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import main.controllers.FileScanner;
 import main.controllers.PathFinder;
 import main.entity.DirectoryTree;
+import main.entity.FindeFile;
 
 import java.io.File;
 import java.util.List;
@@ -44,6 +45,7 @@ public class FileUtils {
             executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.MINUTES);
             DirectoryTree.createNewTree(path, doctorFinderProvider.getCheckedBoxes(), multimap);
             doctorFinderProvider.filesTree.setRoot(DirectoryTree.getTreeItem());
+            AlertBox.displayFoundWord("Where found it?", "Line where found the template", FindeFile.findWordLine);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

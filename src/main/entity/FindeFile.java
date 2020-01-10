@@ -1,9 +1,12 @@
 package main.entity;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 public class FindeFile {
+    public static List<String> findWordLine = new LinkedList<String>();
     private FileType fileType;
     private ArrayList<Integer> lineNumber;
     private String url;

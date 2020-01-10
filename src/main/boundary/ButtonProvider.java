@@ -1,12 +1,17 @@
 package main.boundary;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import main.controllers.JsonService;
+import main.entity.FindeFile;
+import main.entity.LCS;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +40,7 @@ public class ButtonProvider {
         doctorFinderProvider.searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
+                FindeFile.findWordLine = new LinkedList<String>();
                 doctorFinderProvider.loadTreeItems();
                 doctorFinderProvider.fileContent.getHtmlText()
                         .replace("<html><head></head><body>", "")
@@ -99,6 +105,16 @@ public class ButtonProvider {
 
     private void saveHistory() {
         jsonService.saveJson();
+    }
+
+    public void setSearchPrecision() {
+        doctorFinderProvider.percentPrecision.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov,
+                                Number old_val, Number new_val) {
+                LCS.MATCHING_PERCENT = new_val.doubleValue() / 100;
+                System.out.println(LCS.MATCHING_PERCENT);
+            }
+        });
     }
 
 

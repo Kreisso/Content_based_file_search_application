@@ -33,6 +33,7 @@ public class DoctorFinderProvider {
     private final ButtonProvider buttonProvider = new ButtonProvider(this);
     private JsonService jsonService = new JsonService();
     public TreeView<String> filesTree;
+    public Slider percentPrecision;
     public CheckListView<String> typeFiles;
     public AreaChart areaChart;
     public Button searchButton, chooseDirectoryButton, saveButton;
@@ -49,6 +50,7 @@ public class DoctorFinderProvider {
         loadCheckListItems("TXT", "RTF", "DOC", "DOCX", "ODT", "CSS", "HTML", "HTM", "XML", "WPS", "PAGES");
         loadChart();
         buttonProvider.setSearchButton();
+        buttonProvider.setSearchPrecision();
         buttonProvider.setSaveButton();
         buttonProvider.setMenuItem();
         addDirectoryChooser();

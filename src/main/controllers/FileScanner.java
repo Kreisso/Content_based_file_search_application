@@ -31,7 +31,6 @@ public class FileScanner implements Runnable {
     }
 
     private void FindWord(File file) throws FileNotFoundException {
-        FindeFile findeFile = new FindeFile();
         Scanner reader = new Scanner(new BufferedReader(new FileReader(file)));
         int lineNumber = 0;
 
@@ -40,10 +39,16 @@ public class FileScanner implements Runnable {
             String line = reader.nextLine();
             List<String> temporaryList = List.of(line.split(" "));
             Set<String> splitString = new HashSet<>(temporaryList);
-            splitString = splitString.stream().filter(s -> LCS.computeMatching(s, sample)).collect(Collectors.toSet());
+//            splitString = splitString.stream().filter(s -> LCS.computeMatching(s, sample)).collect(Collectors.toSet());
+            splitString = splitString.stream()
+                    .map(s -> LCS.computeMatching(s, sample))
+                    .filter(word -> !word.equals(""))
+                    .collect(Collectors.toSet());
             System.out.println("rozmiar seta: " + splitString.size());
+//            System.out.println(splitString);
             if (splitString.size() > 0) {
-                System.out.println("Szukane słowo znajduje się w pliku: " + file.getPath() + " w lini " + lineNumber);
+                FindeFile.findWordLine.add("The word you are looking for is in the file: " + file.getPath() + ", words: " + splitString + ", in line number:  " + lineNumber);
+//                System.out.println("Szukane słowo znajduje się w pliku: " + file.getPath() + " w lini " + lineNumber);
                 filePathToLineNumber.put(file.getPath(), String.valueOf(lineNumber));
             }
         }

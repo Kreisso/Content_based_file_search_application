@@ -9,7 +9,7 @@
 <?import javafx.scene.web.HTMLEditor?>
 <?import org.controlsfx.control.CheckListView?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
-            prefWidth="960.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="960.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="main.boundary.DoctorFinderProvider">
     <top>
         <VBox prefHeight="57.0" prefWidth="600.0" BorderPane.alignment="CENTER">
@@ -24,6 +24,21 @@
                         <Menu mnemonicParsing="false" text="Help">
                             <items>
                                 <MenuItem fx:id="about" mnemonicParsing="false" text="About"/>
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Searching precision">
+                            <items>
+                                <MenuItem mnemonicParsing="false">
+                                    <graphic>
+                                        <Slider fx:id="percentPrecision" blockIncrement="5.0"
+                                                nodeOrientation="LEFT_TO_RIGHT" prefHeight="38.0" prefWidth="178.0"
+                                                showTickLabels="true" showTickMarks="true" value="90.0">
+                                            <padding>
+                                                <Insets top="10.0"/>
+                                            </padding>
+                                        </Slider>
+                                    </graphic>
+                                </MenuItem>
                             </items>
                         </Menu>
                     </menus>
@@ -53,8 +68,11 @@
                         </Button>
                     </children>
                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </padding>
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
                 </HBox>
             </children>
         </VBox>
