@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class AlertBox {
 
-    public static void display(String title, String header, String message) {
+    public static void displayInfoAlert(String title, String header, String message) {
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -22,7 +22,7 @@ public class AlertBox {
         alert.showAndWait();
     }
 
-    public static void displayFoundWord(String title, String header, List<String> messages) {
+    public static void displayFoundWordAlert(String title, String header, List<String> messages) {
         messages = messages.stream().map(message -> message = message + "\n").collect(Collectors.toList());
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

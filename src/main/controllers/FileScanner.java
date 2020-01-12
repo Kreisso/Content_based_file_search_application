@@ -1,7 +1,7 @@
 package main.controllers;
 
 import com.google.common.collect.Multimap;
-import main.entity.FindeFile;
+import main.entity.FindFile;
 import main.entity.LCS;
 
 import java.io.BufferedReader;
@@ -30,7 +30,7 @@ public class FileScanner implements Runnable {
         this.fileType = fileType;
     }
 
-    private void FindWord(File file) throws FileNotFoundException {
+    private void findWord(File file) throws FileNotFoundException {
         Scanner reader = new Scanner(new BufferedReader(new FileReader(file)));
         int lineNumber = 0;
 
@@ -47,7 +47,7 @@ public class FileScanner implements Runnable {
             System.out.println("rozmiar seta: " + splitString.size());
 //            System.out.println(splitString);
             if (splitString.size() > 0) {
-                FindeFile.findWordLine.add("The word you are looking for is in the file: " + file.getPath() + ", words: " + splitString + ", in line number:  " + lineNumber);
+                FindFile.findWordLine.add("The word you are looking for is in the file: " + file.getPath() + ", words: " + splitString + ", in line number:  " + lineNumber);
 //                System.out.println("Szukane słowo znajduje się w pliku: " + file.getPath() + " w lini " + lineNumber);
                 filePathToLineNumber.put(file.getPath(), String.valueOf(lineNumber));
             }
@@ -70,7 +70,7 @@ public class FileScanner implements Runnable {
                     interrupt = true;
                     queue.put(currentFile);
                 } else {
-                    FindWord(currentFile);
+                    findWord(currentFile);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

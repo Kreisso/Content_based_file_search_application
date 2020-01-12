@@ -13,12 +13,8 @@ import java.util.function.Predicate;
 public class DirectoryTree {
     static TreeItem<String> root;
     static List<String> filesType;
-//    private static final Image folderIcon =
-//            new Image(DirectoryTree.class.getResourceAsStream("image/foolderIcon.png"));
 
     public static void createNewTree(String rootName, List<String> types, Multimap<String, String> multimap) {
-        //Node rootIcon =  new ImageView(new Image(DirectoryTree.class.getResourceAsStream("res/img/foolderIcon.png")));
-        //root  = new TreeItem<String>(rootName, rootIcon);
         root = new TreeItem<String>(rootName);
         root.setExpanded(true);
         filesType = types;
@@ -26,19 +22,14 @@ public class DirectoryTree {
         File rootFile = new File(rootName);
         File[] fileList = rootFile.listFiles();
 
-        // create tree
         fileList = getFiles(fileList, multimap);
         for (File file : fileList) {
-            DirectoryTree.createTree(file, DirectoryTree.getTreeItem(), multimap);
+            DirectoryTree.createTree(file, DirectoryTree.getTreeRoot(), multimap);
         }
 
     }
 
-    public static void addChildren(String childrenName) {
-        root.getChildren().add(new TreeItem<String>(childrenName));
-    }
-
-    public static TreeItem<String> getTreeItem() {
+    public static TreeItem<String> getTreeRoot() {
         return root;
     }
 

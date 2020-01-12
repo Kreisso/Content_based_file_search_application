@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public class FindeFile {
+public class FindFile {
     public static List<String> findWordLine = new LinkedList<String>();
     private FileType fileType;
     private ArrayList<Integer> lineNumber;
@@ -48,8 +48,8 @@ public class FindeFile {
             return this;
         }
 
-        public FindeFile build() {
-            FindeFile file = new FindeFile();
+        public FindFile build() {
+            FindFile file = new FindFile();
             file.url = this.url;
             file.fileType = this.fileType;
             file.parentUrl = this.parentUrl;

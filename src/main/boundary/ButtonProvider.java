@@ -5,7 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import main.controllers.JsonService;
-import main.entity.FindeFile;
+import main.entity.FindFile;
 import main.entity.LCS;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class ButtonProvider {
         doctorFinderProvider.searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                FindeFile.findWordLine = new LinkedList<String>();
+                FindFile.findWordLine = new LinkedList<String>();
                 doctorFinderProvider.loadTreeItems();
                 doctorFinderProvider.fileContent.getHtmlText()
                         .replace("<html><head></head><body>", "")
@@ -63,12 +63,12 @@ public class ButtonProvider {
             doctorFinderProvider.areaChart.getData().clear();
             JsonService.clearHistory();
             saveHistory();
-            AlertBox.display("Delete history", "History correctly removed", "");
+            AlertBox.displayInfoAlert("Delete history", "History correctly removed", "");
 
         });
 
         doctorFinderProvider.about.setOnAction(e -> {
-            AlertBox.display("About", APPLICATION_NAME, MESSAGE_IN_ABOUT);
+            AlertBox.displayInfoAlert("About", APPLICATION_NAME, MESSAGE_IN_ABOUT);
         });
     }
 
@@ -89,7 +89,7 @@ public class ButtonProvider {
                 return;
             }
             System.out.println("plik : " + doctorFinderProvider.getPathFile() + " zapisany");
-            AlertBox.display("Save File", "File saved correctly", doctorFinderProvider.getPathFile());
+            AlertBox.displayInfoAlert("Save File", "File saved correctly", doctorFinderProvider.getPathFile());
         });
     }
 
